@@ -37,6 +37,16 @@ public class KitchenObject : MonoBehaviour {
         Destroy(gameObject);
     }
 
+    public bool TryGetPlate(out PlateKicthenObject plateKicthenObject) {
+        if(this is PlateKicthenObject) {
+            plateKicthenObject = this as PlateKicthenObject;
+            return true;
+        } else {
+            plateKicthenObject = null;
+            return false;
+        }
+    }
+
     public static KitchenObject CreateKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent) {
         Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab);
         KitchenObject kitchenObject = kitchenObjectTransform.GetComponent<KitchenObject>();
