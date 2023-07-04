@@ -7,6 +7,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     public static Player Instance { get; private set; }
 
     public event EventHandler OnPickedSomething;
+
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
     public class OnSelectedCounterChangedEventArgs : EventArgs {
         public BaseCounter selectedCounter;
@@ -22,7 +23,6 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     private Vector3 lastInteractDirection;
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
-    
 
     private void Awake() {
         if(Instance != null) {
@@ -38,10 +38,14 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     }
 
     private void GameInput_OnInteractAction(object sender, System.EventArgs e) {
+        if(!GameManager.Instance.IsGamePlaying()) return;
+
         selectedCounter?.Interact(this);
     }
 
     private void GameInput_OnInteractAlternateAction(object sender, System.EventArgs e) {
+        if(!GameManager.Instance.IsGamePlaying()) return;
+
         selectedCounter?.InteractAlternate(this);
     }
 

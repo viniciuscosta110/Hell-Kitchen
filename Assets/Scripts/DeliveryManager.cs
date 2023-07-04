@@ -15,8 +15,8 @@ public class DeliveryManager : MonoBehaviour {
     private List<RecipeSO> waitingRecipeSOList;
     private float spawnRecipeTimer;
     private float spawnRecipeTimerMax = 4f;
-
-    private int maxWaitingRecipeMax = 4;
+    private int waitingRecipeMax = 4;
+    private int deliveredRecipesAmount;
 
     private void Awake() {
         Instance = this;
@@ -30,7 +30,7 @@ public class DeliveryManager : MonoBehaviour {
         if (spawnRecipeTimer <= 0f) {
             spawnRecipeTimer = spawnRecipeTimerMax;
 
-            if(waitingRecipeSOList.Count < maxWaitingRecipeMax) {
+            if(waitingRecipeSOList.Count < waitingRecipeMax) {
                 RecipeSO waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
                 waitingRecipeSOList.Add(waitingRecipeSO);
 
@@ -58,6 +58,8 @@ public class DeliveryManager : MonoBehaviour {
                     
                     OnRecipeDelivered?.Invoke(this, EventArgs.Empty);
                     OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
+                    deliveredRecipesAmount++;
+
                     return;
                 }
             }
@@ -68,5 +70,9 @@ public class DeliveryManager : MonoBehaviour {
 
     public List<RecipeSO> GetWaitingRecipeSOList() {
         return waitingRecipeSOList;
+    }
+
+    public int GetRecipesDeliveredAmount() {
+        return deliveredRecipesAmount;
     }
 }
