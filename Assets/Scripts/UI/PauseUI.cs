@@ -7,10 +7,16 @@ using UnityEngine.UI;
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] private Button resumeButton;
-    [SerializeField] private Button mainMenyButton;
+    [SerializeField] private Button mainMenuButton;
+    [SerializeField] private Button optionsButton;
     private void Awake() {
         resumeButton.onClick.AddListener(OnResumeButtonClicked);
-        mainMenyButton.onClick.AddListener(OnMainMenuButtonClicked);
+        mainMenuButton.onClick.AddListener(OnMainMenuButtonClicked);
+        optionsButton.onClick.AddListener(OnOptionsButtonClicked);
+    }
+
+    private void OnOptionsButtonClicked() {
+        OptionsUI.Instance.Show();
     }
 
     private void OnResumeButtonClicked(){
