@@ -6,7 +6,18 @@ using UnityEngine.InputSystem;
 
 public class GameInput : MonoBehaviour
 {
+    private const string PLAYER_PREFS_BINDINGS = "InputBindings";
     public static GameInput Instance { get; private set; }
+
+    public enum Binding {
+        Move_Up,
+        Move_Down,
+        Move_Left,
+        Move_Right,
+        Interact,
+        Interact_Alternate,
+        Pause
+    }
 
     public event EventHandler OnInteractAction;
     public event EventHandler OnInteractAlternateAction;
@@ -17,6 +28,11 @@ public class GameInput : MonoBehaviour
         Instance = this;
         
         playerInputActions = new PlayerInputActions();
+
+        if(PlayerPrefs.HasKey(PLAYER_PREFS_BINDINGS)) {
+            playerInputActions.LoadBindingOverridesFromJson(PlayerPrefs.GetString(PLAYER_PREFS_BINDINGS));
+        }
+        
         playerInputActions.Player.Enable();
 
         playerInputActions.Player.Interact.performed += Interact_Performed;
@@ -51,5 +67,79 @@ public class GameInput : MonoBehaviour
         inputVector = inputVector.normalized;
 
         return inputVector;
+    }
+
+    public string GetBindingText(Binding binding) {
+        switch (binding) {
+            case Binding.Interact:
+                return playerInputActions.Player.Interact.GetBindingDisplayString(0);
+            case Binding.Interact_Alternate:
+                return playerInputActions.Player.InteractAlternate.GetBindingDisplayString(0);
+            case Binding.Pause:
+                return playerInputActions.Player.Pause.GetBindingDisplayString(0);
+            case Binding.Move_Up:
+                return playerInputActions.Player.Move.GetBindingDisplayString(1);
+            case Binding.Move_Down:
+                return playerInputActions.Player.Move.GetBindingDisplayString(2);
+            case Binding.Move_Left:
+                return playerInputActions.Player.Move.GetBindingDisplayString(3);
+            case Binding.Move_Right:
+                return playerInputActions.Player.Move.GetBindingDisplayString(4);
+            default:
+                return "N/A";
+        }
+    }
+
+    public void RebindBiding(Binding binding, Action onActionRebound) {
+        playerInputActions.Player.Disable();
+        InputAction inputAction;
+        int bindingIndex;
+
+        switch(binding){
+            default:
+            case Binding.Move_Up:
+                inputAction = playerInputActions.Player.Move;
+                bindingIndex = 1;
+                break;
+            case Binding.Move_Down:
+                inputAction = playerInputActions.Player.Move;
+                bindingIndex = 2;
+                break;
+
+            case Binding.Move_Left:
+                inputAction = playerInputActions.Player.Move;
+                bindingIndex = 3;
+                break;
+
+            case Binding.Move_Right:
+                inputAction = playerInputActions.Player.Move;
+                bindingIndex = 4;
+                break;
+
+            case Binding.Interact:
+                inputAction = playerInputActions.Player.Interact;
+                bindingIndex = 0;
+                break;
+            
+            case Binding.Interact_Alternate:
+                inputAction = playerInputActions.Player.InteractAlternate;
+                bindingIndex = 0;
+                break;
+            
+            case Binding.Pause:
+                inputAction = playerInputActions.Player.Pause;
+                bindingIndex = 0;
+                break;
+        }
+
+        inputAction.PerformInteractiveRebinding(bindingIndex).OnComplete(callback => {
+            callback.Dispose();
+            playerInputActions.Player.Enable();
+            onActionRebound();
+
+            
+            PlayerPrefs.SetString(PLAYER_PREFS_BINDINGS, playerInputActions.SaveBindingOverridesAsJson());
+            PlayerPrefs.Save();
+        }).Start();
     }
 }
