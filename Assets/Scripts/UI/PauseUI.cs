@@ -16,7 +16,8 @@ public class PauseMenu : MonoBehaviour
     }
 
     private void OnOptionsButtonClicked() {
-        OptionsUI.Instance.Show();
+        Hide();
+        OptionsUI.Instance.Show(Show);
     }
 
     private void OnResumeButtonClicked(){
@@ -28,24 +29,25 @@ public class PauseMenu : MonoBehaviour
     }
 
     private void Start() {
-        hide();
+        Hide();
         GameManager.Instance.OnGameUnpaused += GameManager_OnGameUnpaused;
         GameManager.Instance.OnGamePaused += GameManager_OnGamePaused;
     }
 
     private void GameManager_OnGamePaused(object sender, EventArgs e) {
-        show();
+        Show();
     }
 
     private void GameManager_OnGameUnpaused(object sender, EventArgs e) {
-        hide();
+        Hide();
     }
 
-    private void show() {
+    private void Show() {
         gameObject.SetActive(true);
+        resumeButton.Select();
     }
 
-    private void hide() {
+    private void Hide() {
         gameObject.SetActive(false);
     }
 }
